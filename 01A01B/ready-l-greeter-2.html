@@ -23,7 +23,7 @@
           font-size: 14pt;
         }
         
-        @media (min-width: 1024px)
+        @media only screen and (min-width: 1024px)
         {
           body
           {
@@ -41,10 +41,10 @@
         // 1 - get a reference to the button
         let hbutton = document.querySelector("#btn-hello");
         // 2 - add a click event to button that calls a `sayHello` function
-        hbutton.addEventListener("click", function(){greeting(true);});
+        hbutton.addEventListener("click", function(){greet(true);});
         //Get the goodbye button, and have it say Goodbye when clicked
         let gbutton = document.querySelector("#btn-goodbye");
-        gbutton.addEventListener("click", function(){greeting(false);});
+        gbutton.addEventListener("click", function(){greet(false);});
 
         //Imperitively give the paragraph red text and a yellow background
         let p = document.querySelector("p");
@@ -53,19 +53,11 @@
       }
 
       // 3 - create a `greeter()` function
-      function greeting(greeting)
+      function greet(greeting)
       {
         // 3A - get name of person from the <input>
-        let fname = document.querySelector("#input-firstname").value.trim();
-        if(fname == "")
-        {
-          fname = "Peter";
-        }
-        let lname = document.querySelector("#input-lastname").value.trim();
-        if(lname == "")
-        {
-          lname = "Parker";
-        }
+        let fname = document.querySelector("#input-firstname").value.trim() || "Peter";
+        let lname = document.querySelector("#input-lastname").value.trim() || "Parker";
 
         // 3B - get a reference to the #output <p>
         let output = document.querySelector("#output");
