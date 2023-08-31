@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greeter</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+
     <style>
-        *{font-size:1.5em;}
+        *
+        {
+          font-size:1.5em;
+          font-family: 'Raleway', sans-serif;
+        }
 
         button 
         {
@@ -14,16 +23,20 @@
           font-size: 14pt;
         }
         
-
-
+        @media (min-width: 1024px)
+        {
+          body
+          {
+            background-color: red;
+            padding: 100px;
+          }
+        }
     </style>
 
     <script>
       "use strict";
 
-      window.onload = buttonSetup;
-
-      function buttonSetup()
+      window.onload = function()
       {
         // 1 - get a reference to the button
         let hbutton = document.querySelector("#btn-hello");
