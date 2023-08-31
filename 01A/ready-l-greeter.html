@@ -6,31 +6,74 @@
     <title>Greeter</title>
     <style>
         *{font-size:1.5em;}
-      </style>
-</head>
-<body>
-    <button>Click Me!</button>
-    <input id="input-firstname" placeholder="Type in your name">
-    <p id="output">???</p>
 
-    <script>
-        "use strict";
-  
-        // 1 - get a reference to the button
-        let button = document.querySelector("button");
-        // 2 - add a click event to button that calls a `sayHello` function
-        button.onclick = sayHello;
-        // 3 - create a `sayHello()` function
-        function sayHello()
+        button 
         {
-          // 3A - get name of person from the <input>
-          let name = document.querySelector("#input\-firstname");
-          // 3B - get a reference to the #output <p>
-          let output = document.querySelector("#output");
-          // 3C - update HTML of #output <p>
-          output.innerHTML = `Hello ${name.value}!`;
+          height: 50px;
+          width: 150px;
+          font-size: 14pt;
         }
         
-        </script>
+
+
+    </style>
+
+    <script>
+      "use strict";
+
+      window.onload = buttonSetup;
+
+      function buttonSetup()
+      {
+        // 1 - get a reference to the button
+        let hbutton = document.querySelector("#btn-hello");
+        // 2 - add a click event to button that calls a `sayHello` function
+        hbutton.addEventListener("click", function(){greeting(true);});
+        //Get the goodbye button, and have it say Goodbye when clicked
+        let gbutton = document.querySelector("#btn-goodbye");
+        gbutton.addEventListener("click", function(){greeting(false);});
+
+        //Imperitively give the paragraph red text and a yellow background
+        let p = document.querySelector("p");
+        p.style.color = "red";
+        p.style.backgroundColor = "yellow";
+      }
+
+      // 3 - create a `greeter()` function
+      function greeting(greeting)
+      {
+        // 3A - get name of person from the <input>
+        let fname = document.querySelector("#input-firstname").value.trim();
+        if(fname == "")
+        {
+          fname = "Peter";
+        }
+        let lname = document.querySelector("#input-lastname").value.trim();
+        if(lname == "")
+        {
+          lname = "Parker";
+        }
+
+        // 3B - get a reference to the #output <p>
+        let output = document.querySelector("#output");
+
+        // 3C - update HTML of #output <p>
+        if(greeting)
+        {
+          output.innerHTML = `Hello ${fname} ${lname}!`;
+        }
+        else
+        {
+          output.innerHTML = `Goodbye ${fname} ${lname}!`;
+        }
+      }
+    </script>
+</head>
+<body>
+    <button id="btn-hello">Click Me!</button>
+    <button id="btn-goodbye">Say Goodbye</button>
+    <input id="input-firstname" placeholder="Type in your first name">
+    <input id="input-lastname" placeholder="Type in your last name">
+    <p id="output">???</p>
 </body>
 </html>
