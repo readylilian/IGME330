@@ -40,9 +40,11 @@
                 document.querySelector("#output").innerHTML = "JSON is null";
                 return;
             }
-            const dogHtml = parsed.dognames.map(w => `<li>${w}</li>`).join("");
-            const catHtml = parsed.catnames.map(w => `<li>${w}</li>`).join("");
-            const birdHtml = parsed.birdnames.map(w => `<li>${w}</li>`).join("");
+            const keys = Object.keys(parsed);
+            
+            const dogHtml = keys[0].namelist.map(w => `<li>${w}</li>`).join("");
+            const catHtml = keys[1].namelist.map(w => `<li>${w}</li>`).join("");
+            const birdHtml = keys[2].namelist.map(w => `<li>${w}</li>`).join("");
 
             document.querySelector("#output").innerHTML = 
             `<h3>Dog Names</h3>
