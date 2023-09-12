@@ -1,0 +1,127 @@
+body
+{
+    font-family: monospace;
+}
+h1 {
+    font-family: 'Kanit', sans-serif;
+}
+#output
+{
+    font-size:200%;
+}
+/*Changed this to generic so both buttons look nice*/
+button
+{
+    width:200px;
+    height:50pt;
+    font-size: 15pt;
+}
+#button-5
+{
+    display: none;
+}
+
+/*My addition to the media queries*/
+@media only screen and (max-width:320px) {
+    h1 {
+        font-size: 1rem;
+        background-color: chocolate;
+        color: bisque;
+        margin: 0;
+        padding: 10px;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    #output {
+        text-align: center;
+    }
+
+    .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+}
+
+@media only screen and (min-width:320px) {
+    .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    html,
+    body,
+    .container {
+        height: 100%;
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+        background-color: #174287;
+        color: #F5F5F5;
+        padding: .8rem;
+        margin: 0;
+        text-align: center;
+    }
+
+    #output {
+        text-align: center;
+    }
+}
+@media only screen and (max-width: 600px) 
+{
+    body
+    {
+        text-align: center;
+    }
+}
+@media only screen and (min-width:768px) {
+    h1 {
+        font-size: 3rem;
+        background-color: #23D160;
+    }
+
+    button {
+        width: 300px;
+        height: 75pt;
+        font-size: 1.5rem;
+    }
+
+    body {
+        color: darkgray;
+        font-size: 2rem;
+    }
+}
+@media only screen and (min-width:1024px) {
+    body {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    h1 {
+        background-color: #FF3860;
+    }
+
+    .container {
+        display: block;
+        margin: 1rem;
+    }
+
+    #output {
+        text-align: left;
+    }
+}
+@media only screen and (min-width: 1408px) 
+{
+    #button-5
+    {
+        display:block;
+    }
+}
