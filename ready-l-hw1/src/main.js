@@ -40,13 +40,15 @@ const babbleLoaded = (e) =>
     console.log(`In onload - HTTP Status Code = ${e.target.status}`);
             
     const json = e.target.responseText;
-    if(!json)
+    //Parse the JSON and add to the arrays
+    let parsed;
+    try{
+        parsed = JSON.parse(json);
+    }catch
     {
-        document.querySelector("#output").innerHTML = "XML is null";
+        document.querySelector("#output").innerHTML = "JSON is null";
         return;
     }
-    //Parse the JSON and add to the arrays
-    const parsed = JSON.parse(json);
     words1 = parsed.words1;
     words2 = parsed.words2;
     words3 = parsed.words3;
