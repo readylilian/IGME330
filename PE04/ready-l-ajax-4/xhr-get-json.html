@@ -41,18 +41,15 @@
                 return;
             }
             const keys = Object.keys(parsed);
+            let html = "";
             
-            const dogHtml = keys[0].namelist.map(w => `<li>${w}</li>`).join("");
-            const catHtml = keys[1].namelist.map(w => `<li>${w}</li>`).join("");
-            const birdHtml = keys[2].namelist.map(w => `<li>${w}</li>`).join("");
-
-            document.querySelector("#output").innerHTML = 
-            `<h3>Dog Names</h3>
-            <ol>${dogHtml}</ol>
-            <h3>Cat Names</h3>
-            <ol>${catHtml}</ol>
-            <h3>Bird Names</h3>
-            <ol>${birdHtml}</ol>`;
+            for(let k of keys)
+            {
+                const obj = parsed[k];
+                html += `<h3>${obj.title}</h3>`;
+                html += `<ol>${obj["namelist"].map(w => `<li>${w}</li>`).join("")}</ol>`;
+            }
+            document.querySelector("#output").innerHTML = html;
         };
         xhr.onerror = e => console.log(`In onerror - HTTP Status Code = ${e.target.status}`);
         xhr.open("GET", url);
