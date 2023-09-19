@@ -1,4 +1,1 @@
-export const randomElement = (max) =>
-{
-    return Math.floor(Math.random() * max);
-}
+export const randomElement = max => Math.floor(Math.random() * max);
