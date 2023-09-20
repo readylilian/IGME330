@@ -1,0 +1,7 @@
+{
+    "greeter-data":
+    {
+        "title": "Greeter",
+        "greetlist": ["Hi", "Hello", "Hey there"]
+    }
+}
