@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 3</title>
+    <style>
+        canvas
+        {
+            border:1px solid gray;
+        }
+    </style>
+    <script>
+        "use strict";
+		
+        let ctx;
+		// #1 call the `init` function after the pages loads
+		window.onload = init;
+	
+		function init(){
+			let canvas = document.querySelector("canvas");
+			ctx = canvas.getContext("2d");
+            update();
+		}
+        // draw a random Rectangle  
+        function drawRandomRect(ctx)
+        {
+            ctx.lineWidth = getRandomInt(2,12);
+            ctx.strokeStyle = getRandomColor();
+            ctx.fillStyle = getRandomColor();
+            ctx.beginPath();
+            //Pick a random shape to draw, and randomize the dimensions of each
+            (() =>
+            {
+                switch(getRandomInt(0, 3))
+                {
+                    //rect
+                    case 0:
+                        ctx.rect(getRandomInt(0,640),getRandomInt(0,480),getRandomInt(10,90),getRandomInt(10,90));
+                        break;
+                    //circle
+                    case 1:
+                        ctx.arc(getRandomInt(0,640),getRandomInt(0,480),getRandomInt(10,90),0,2 * Math.PI);
+                        break;
+                    //partial circle
+                    case 2:
+                        ctx.arc(getRandomInt(0,640),getRandomInt(0,480),getRandomInt(10,90),getRandomInt(0, 2 * Math.PI),getRandomInt(0, 2 * Math.PI));
+                        break;
+                    //triangle
+                    case 3:
+                        ctx.moveTo(getRandomInt(0,640), getRandomInt(0,640));
+			            ctx.lineTo(getRandomInt(0,640), getRandomInt(0,640));
+			            ctx.lineTo(getRandomInt(0,640), getRandomInt(0,640));
+                        break;
+                }
+            })();
+            ctx.closePath();
+            ctx.fill();
+            //Then decide to add a stroke or not
+            if(getRandomInt(0, 1))
+            {
+                ctx.stroke();
+            }
+        }
+
+        function update()
+        {
+            requestAnimationFrame(update);
+            drawRandomRect(ctx);
+        }
+
+        // handy helper functions!
+        function getRandomColor()
+        {
+            function getByte()
+            {
+                return 105 + Math.round(Math.random() * 200);
+            }
+            return "rgba(" + getByte() + "," + getByte() + "," + getByte() + ",.8)";
+        }
+    
+        function getRandomInt(min, max) 
+        {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    </script>
+</head>
+<body>
+    <canvas width="640" height="480">
+		Get a real browser!
+	</canvas>
+</body>
+</html>
