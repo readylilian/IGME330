@@ -9,11 +9,12 @@
 	</style>
 	<script>
 	"use strict";
-	const canvasWidth = 400, canvasHeight = 300;
+	const canvasWidth = 800, canvasHeight = 900;
 	let ctx;
 	let n = 0;
 	let fps = 60;
 	let radius = 2;
+	let saturation = 50;
 	const divergence = 237.5;
 	const c = 3;
 
@@ -24,6 +25,14 @@
 		canvas.height = canvasHeight;
 		ctx.fillRect(0,0,canvasWidth,canvasHeight);
 		loop();
+
+		document.querySelector("#btnRestart").onclick = restart;
+		document.querySelector("#btnDisrupt").onclick = disruptCircle;
+		saturation = document.querySelector("#saturation").value;
+		document.querySelector("#saturation").oninput = () =>
+		{
+			saturation = document.querySelector("#saturation").value;
+		}
 	}
 
 	function loop()
@@ -41,11 +50,30 @@
 		let y = r * Math.sin(a) + canvasHeight/2;
 		//console.log(x,y);
 		let aDegrees = (n * divergence) % 361;
-		let color = `hsl(${n/5 % 361},100%,50%)`;
+		let color = `hsl(${n/5 % 361},${saturation}%,50%)`;
 		drawCircle(ctx,x,y,radius,color);
 		n++;
 	}
 
+	function restart()
+	{
+		ctx.save();
+		n = 0;
+        ctx.fillStyle = "black";
+        ctx.globalAlpha = 1;
+        ctx.fillRect(0,0,canvasWidth,canvasHeight);
+        ctx.restore();
+		
+	}
+
+	function disruptCircle()
+	{
+		ctx.save();
+        ctx.fillStyle = "black";
+        ctx.globalAlpha = 1;
+        ctx.fillRect(0,0,canvasWidth,canvasHeight);
+        ctx.restore();
+	}
 	// helpers
 	function dtr(degrees){
 		return degrees * (Math.PI/180);
@@ -65,9 +93,26 @@
 </head>
 <body>
 <canvas id="canvas"></canvas>
-<button id="btnReset">Reset</button>
-<p>
-
-</p>
+<section>
+	<button id="btnRestart">Restart</button>
+	<button id="btnDisrupt">Black Hole</button>
+	<label for="saturation">Saturation</label>
+	<input type="range" min="1" max="100" value="50" class="slider" id="saturation">
+	<p>
+		<ul>
+			<li>The Black Hole button covers the currently drawn circle with a black hole</li>
+			<li>The Restart button sets the n count back to 0 and clears the previous flower</li>
+			<li>The Saturation slider allows you to set the saturation of the color of the flower</li>
+			<li>Changes from starter code:
+				<ul>
+					<li>Increased the frame rate to 60 FPS (required)</li>
+					<li>Increased the divergence angle to get three "arms"</li>
+					<li>Increased canvas to 800 x 900</li>
+					<li>Added a saturation variable and slider to control it.</li>
+				</ul>
+			</li>
+		</ul>
+	</p>
+</section>
 </body>
 </html>
