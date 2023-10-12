@@ -3,7 +3,7 @@ let audioCtx;
 
 // **These are "private" properties - these will NOT be visible outside of this module (i.e. file)**
 // 2 - WebAudio nodes that are part of our WebAudio audio routing graph
-let element, sourceNode, analyserNode, gainNode;
+let element, sourceNode, analyserNode, gainNode, biquadFilter, highshelf, lowshelf, lowShelfBiquadFilter;
 
 // 3 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
@@ -50,9 +50,18 @@ const setupWebaudio = (filepath) => {
     gainNode = audioCtx.createGain();
     gainNode.gain.value = DEFAULTS.gain;
 
+    highshelf = false;
+    biquadFilter = audioCtx.createBiquadFilter();
+    biquadFilter.type = "highshelf";
+
+    lowshelf = false;
+    lowShelfBiquadFilter = audioCtx.createBiquadFilter();
+    lowShelfBiquadFilter.type = "lowshelf";
     // 8 - connect the nodes - we now have an audio graph
     sourceNode.connect(analyserNode);
-    analyserNode.connect(gainNode);
+    analyserNode.connect(lowShelfBiquadFilter);
+    lowShelfBiquadFilter.connect(biquadFilter);
+    biquadFilter.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 }
 
@@ -73,5 +82,31 @@ const setVolume = (value) => {
     gainNode.gain.value = value;
 }
 
-export { audioCtx, setupWebaudio, playCurrentSound, pauseCurrentSound, loadSoundFile, setVolume, analyserNode };
+function toggleHighshelf(){
+    if(highshelf){
+      biquadFilter.frequency.setValueAtTime(1000, audioCtx.currentTime); // we created the `biquadFilter` (i.e. "treble") node last time
+      biquadFilter.gain.setValueAtTime(25, audioCtx.currentTime);
+    }else{
+      biquadFilter.gain.setValueAtTime(0, audioCtx.currentTime);
+    }
+    highshelf = !highshelf;
+}
+
+function toggleLowshelf(){
+    if(lowshelf){
+      lowShelfBiquadFilter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+      lowShelfBiquadFilter.gain.setValueAtTime(15, audioCtx.currentTime);
+    }else{
+      lowShelfBiquadFilter.gain.setValueAtTime(0, audioCtx.currentTime);
+    }
+    lowshelf = !lowshelf;
+}
+
+export 
+{ 
+    audioCtx, setupWebaudio, playCurrentSound, pauseCurrentSound, 
+    loadSoundFile, setVolume, analyserNode, 
+    biquadFilter, toggleHighshelf , highshelf,
+    lowShelfBiquadFilter, toggleLowshelf, lowshelf
+};
 // make sure that it's a Number rather than a String

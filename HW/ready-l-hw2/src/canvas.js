@@ -9,10 +9,125 @@
 
 import * as utils from './utils.js';
 
-let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
+let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData,mouseHere,mainStar,background;
+let lines = [];
+let stars = [];
 
+const cursor = {
+    x: innerWidth / 2,
+    y: innerHeight / 2,
+};
 
+//Creates a bezier curve based on the audio data at specific points
+class LineTracker{
+    constructor(width,hue,offset){
+        Object.assign(this,{width,hue,offset});
+    }
+
+    update(nicerData){
+        const getByte = () =>
+        {
+            //Color of line based on value of data at a random point
+            let data = nicerData[Math.round(Math.random() * nicerData.length)];
+            return 105 + Math.round( (data / nicerData.length) * this.hue);
+        }
+        this.color =  "rgba(" + getByte() + "," + getByte() + "," + getByte() + ",.5)";
+    }
+
+    draw(ctx, intensity, nicerData){
+        //Draws a bezier curve affected by the 1/3 point of the data (upward)
+        //And the 2/3 point of the data (downward)
+        let thirdHeight = canvasHeight / 3 * 2;
+        //let thirdWidth = canvasWidth / 2;
+        let diff = (Math.max(...nicerData) - Math.min(...nicerData))/2;
+        ctx.save();
+        ctx.lineWidth = this.width;
+        ctx.strokeStyle = this.color;
+        ctx.beginPath(); 
+        ctx.moveTo(-10,thirdHeight + this.offset);
+        ctx.bezierCurveTo
+        (canvasWidth / 10 * 4, 
+        -(diff) * intensity + this.offset, 
+        canvasWidth / 10 * 6, 
+        (diff) * intensity + this.offset, 
+        canvasWidth + 10, 
+        thirdHeight + this.offset);
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+class StandardStar{
+    constructor(clickx,clicky,length){
+        Object.assign(this,{clickx,clicky,length});
+    }
+
+    update()
+    {
+        if(Math.random() >= 0.5)
+        {
+            this.clickx += Math.round(Math.random() * 2);
+        }
+        else
+        {
+            this.clickx -= Math.round(Math.random() * 2);
+        }
+
+        if(Math.random() >= 0.5)
+        {
+            this.clicky += Math.round(Math.random() * 2);
+        }
+        else
+        {
+            this.clicky -= Math.round(Math.random() * 2);
+        }
+    }
+
+    draw(ctx,nicerData)
+    {
+        if(nicerData.length == 0) return;
+        let spacing = 360 / nicerData.length;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,255,255,0.50)';
+        //loop through and draw
+        for (let i = 0; i < nicerData.length; i++) {
+            let radians = degToRad(spacing * i);
+            let x,y;
+            ctx.beginPath();
+            x = this.clickx + (nicerData[i] * this.length) * Math.cos(radians * i);
+            y = this.clicky + (nicerData[i] * this.length) *  Math.sin(radians * i);
+            ctx.moveTo(this.clickx,this.clicky);
+            ctx.lineTo(x,y);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    setPosition(x,y)
+    {
+        this.clickx = x;
+        this.clicky = y;
+    }
+}
 const setupCanvas = (canvasElement, analyserNodeRef) => {
+    canvasElement.onmousemove = (e) =>
+    {
+        let mouse = actualMousePos(e,canvasElement);
+        cursor.x = mouse.x;
+        cursor.y = mouse.y;
+        mouseHere = true;
+    }
+    canvasElement.onmouseout = (e) =>
+    {
+        mouseHere = false;
+    }
+    canvasElement.onclick = (e) =>
+    {
+        if(!document.fullscreenElement)
+        {
+            stars.push(new StandardStar(cursor.x,cursor.y,Math.random() * .2));
+        }
+    }
     // create drawing context
     ctx = canvasElement.getContext("2d");
     canvasWidth = canvasElement.width;
@@ -23,89 +138,125 @@ const setupCanvas = (canvasElement, analyserNodeRef) => {
     analyserNode = analyserNodeRef;
     // this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize / 2);
+    
+    background = document.querySelector("#background");
+    
+    lines.push(new LineTracker(2,200, +20));
+    lines.push(new LineTracker(2,200, -20));
+    lines.push(new LineTracker(20,100, 0 ));
+    mainStar = new StandardStar(canvasWidth / 2, canvasHeight /2,1);
 }
 
 const draw = (params = {}) => {
+    let playing; 
+    if(document.querySelector("#btn-play").dataset.playing == "no")
+    {
+        playing = false;
+    }
+    else
+    {
+        playing = true;
+    }
     // 1 - populate the audioData array with the frequency data from the analyserNode
     // notice these arrays are passed "by reference" 
-    analyserNode.getByteFrequencyData(audioData);
-    // OR
-    //analyserNode.getByteTimeDomainData(audioData); // waveform data
-
+    if(params.time)
+    {
+        analyserNode.getByteTimeDomainData(audioData); // waveform data
+        //if(audioData[0] == 128) return;
+    }else{
+        analyserNode.getByteFrequencyData(audioData);
+    }
+    //Cuts out all the zeros so the bars and stuff look better
+    //Also is just cool as you can see the changes as a song starts and ends
+    let nicerData = audioData.filter((x) => x > 0);
     // 2 - draw background
     ctx.save();
-    ctx.fillStyle = "black";
-    ctx.globalAlpha = .1;
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    /*ctx.fillStyle = "#143109";
+    ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);*/
+    
+    ctx.drawImage(background,0,0,canvasWidth,canvasHeight);
     ctx.restore();
 
-    // 3 - draw gradient
-    if (params.showGradient) {
-        ctx.save();
-        ctx.fillStyle = gradient;
-        ctx.globalAlpha = .3;
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        ctx.restore();
-    }
-    // 4 - draw bars
-    if (params.showBars) {
-        let barSpacing = 4;
-        let margin = 5;
-        let screenWidthForBars = canvasWidth - (audioData.length * barSpacing) - margin * 2;
-        let barWidth = screenWidthForBars / audioData.length;
-        let barHeight = 200;
-        let topSpacing = 100;
-
-        ctx.save();
-        ctx.fillStyle = 'rgba(255,255,255,0.50)';
-        ctx.strokeStyle = 'rgba(0,0,0,0.50)';
-        //loop through and draw
-        for (let i = 0; i < audioData.length; i++) {
-            ctx.fillRect(margin + i * (barWidth + barSpacing), topSpacing + 256 - audioData[i], barWidth, barHeight);
-            ctx.strokeRect(margin + i * (barWidth + barSpacing), topSpacing + 256 - audioData[i], barWidth, barHeight);
+    if(playing)
+    {
+        for(let i = 0; i < lines.length; i++)
+        {
+            if(Date.now() % 20 == 0)
+            {
+                lines[i].update(nicerData);
+            }
+            lines[i].draw(ctx,params.lineIntensity,nicerData);
         }
-        ctx.restore();
     }
+
+    
     // 5 - draw circles
-    if (params.showCircles) {
-        let maxRadius = canvasHeight / 4;
+    if (params.showCircles && playing) {
+        let maxRadius = canvasHeight / 10;
         ctx.save();
         ctx.globalAlpha = 0.5;
-        for (let i = 0; i < audioData.length; i++) {
-            //red-ish circles
-            let percent = audioData[i] / 255;
+        for (let i = 0; i < nicerData.length; i++) {
+
+            let percent = nicerData[i] / 255;
 
             let circleRadius = percent * maxRadius;
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(255, 111, 111, .35 - percent / 3.0);
-            ctx.arc(canvasWidth / 2, canvasHeight / 2, circleRadius, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
 
-            //blue-ish circles
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(0, 0, 255, .10 - percent / 10.0);
-            ctx.arc(canvasWidth / 2, canvasHeight / 2, circleRadius * 1.5, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
+            drawCircle(
+                canvasWidth - (canvasWidth / 4),
+                canvasHeight / 4,
+                circleRadius * .3,
+                "#02012c");
 
-            //yellowish
-            ctx.save();
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(200, 200, 0, .5 - percent / 5.0);
-            ctx.arc(canvasWidth / 2, canvasHeight / 2, circleRadius * .5, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
-            ctx.restore();
+            drawCircle(
+                canvasWidth - (canvasWidth / 4),
+                canvasHeight / 4,
+                circleRadius * .5,
+                utils.makeColor(255, 255, 255, .5 - percent / 5.0));
+
+            drawCircle(
+                canvasWidth - (canvasWidth / 4),
+                canvasHeight / 4,
+                circleRadius,
+                utils.makeColor(221, 237, 237, .35 - percent / 3.0));
+
+            drawCircle(
+                canvasWidth - (canvasWidth / 4),
+                canvasHeight / 4,
+                circleRadius * 1.5,
+                utils.makeColor(221, 229, 237, .10 - percent / 10.0));
         }
         ctx.restore();
     }
-    // 6 - bitmap manipulation
-    // TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
-    // regardless of whether or not we are applying a pixel effect
-    // At some point, refactor this code so that we are looping though the image data only if
-    // it is necessary
 
+    // 4 - draw stars
+    if (params.showStars && playing) {
+        //let spacing = 360 / nicerData.length;
+
+        ctx.save();
+        if(playing)
+        {
+            for(let i = 0; i < stars.length; i++)
+            {
+                stars[i].update();
+                stars[i].draw(ctx,nicerData);
+            }  
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,0.50)';
+        if(mouseHere && !document.fullscreenElement)
+        {
+            mainStar.setPosition(cursor.x,cursor.y);
+            mainStar.draw(ctx,nicerData);
+        }
+        else
+        {
+            mainStar.setPosition(canvasWidth - (canvasWidth / 4),canvasHeight/4);
+            mainStar.draw(ctx,nicerData);
+        }
+        ctx.restore();
+    }
+
+    // 6 - bitmap manipulation
     // A) grab all of the pixels on the canvas and put them in the `data` array
     // `imageData.data` is a `Uint8ClampedArray()` typed array that has 1.28 million elements!
     // the variable `data` below is a reference to that array 
@@ -115,17 +266,6 @@ const draw = (params = {}) => {
     let width = imageData.width;//not using here
     // B) Iterate through each pixel, stepping 4 elements at a time (which is the RGBA for 1 pixel)
     for (let i = 0; i < length; i += 4) {
-        // C) randomly change every 20th pixel to red
-        if (params.showNoise && Math.random() < .05) {
-            // data[i] is the red channel
-            // data[i+1] is the green channel
-            // data[i+2] is the blue channel
-            // data[i+3] is the alpha channel
-            //data[i] = data[i + 1] = data[i + 2] = 0; // zero out the red and green and blue channels
-            data[i] = 67;
-            data[i + 1] = 36;
-            data[i + 2] = 130; // Noise is now a dark purple
-        } // end if
         //invert?
         if (params.showInvert) {
             let red = data[i], green = data[i + 1], blue = data[i + 2];
@@ -142,8 +282,44 @@ const draw = (params = {}) => {
             data[i] = 127 + 2 * data[i] - data[i + 4] - data[i + width * 4];
         }
     }
+
+    
     // D) copy image data back to canvas
     ctx.putImageData(imageData, 0, 0);
 }
 
-export { setupCanvas, draw };
+const drawCircle = (x,y,radius,color) =>
+{
+    ctx.save();
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+}
+
+const clearStars = () =>
+{
+    stars = [];
+}
+
+const degToRad = (degrees) =>
+{
+    return degrees * (Math.PI /180);
+}
+
+const actualMousePos = (e, canvasElement) =>
+{
+    let canvasRect = canvasElement.getBoundingClientRect();
+    let scaleX = canvasElement.width / canvasRect.width;
+    let scaleY = canvasElement.height / canvasRect.height;
+    let mousePos = 
+    {
+        x: (e.clientX - canvasRect.left) * scaleX,
+        y: (e.clientY - canvasRect.left) * scaleY
+    };
+    return mousePos;
+}
+
+export { setupCanvas, draw, clearStars };

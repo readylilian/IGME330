@@ -9,31 +9,17 @@
 import * as audio from './audio.js';
 import * as utils from './utils.js';
 import * as canvas from './canvas.js';
-
-const drawParams = {
-  showGradient: true,
-  showBars: true,
-  showCircles: true,
-  showNoise: false,
-  showInvert: false,
-  showEmboss: false
-};
-// 1 - here we are faking an enumeration
-const DEFAULTS = Object.freeze({
-  sound1: "media/New Adventure Theme.mp3"
-});
+let highshelf = false;
+let fps = 60;
+let drawParams;
 
 const init = () => {
   console.log("init called");
   console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
-  audio.setupWebaudio(DEFAULTS.sound1);
-  let canvasElement = document.querySelector("canvas"); // hookup <canvas> element
-  setupUI(canvasElement);
-  canvas.setupCanvas(canvasElement, audio.analyserNode);
-  loop();
+  loadJSONXHR();
 }
 
-const setupUI = (canvasElement) => {
+const setupUI = (canvasElement, parsed) => {
   // A - hookup fullscreen button
   const fsButton = document.querySelector("#btn-fs");
   // add .onclick event to button
@@ -60,6 +46,9 @@ const setupUI = (canvasElement) => {
       e.target.dataset.playing = "no"; //CSS sets to play
     }
   };
+
+  document.querySelector("#btn-clear").onclick = canvas.clearStars;
+
   //C - hookup volume slider and label
   let volumeSlider = document.querySelector("#volume-slider");
   let volumeLabel = document.querySelector("#volume-label");
@@ -71,11 +60,19 @@ const setupUI = (canvasElement) => {
     volumeLabel.innerHTML = Math.round((e.target.value / 2 * 100));
   };
 
+  document.querySelector("#path-slider").oninput = e => {
+    drawParams.lineIntensity = e.target.value;
+    document.querySelector("#path-label").innerHTML = e.target.value;
+  }
   //set value of label to match inital value of slider
   volumeSlider.dispatchEvent(new Event("input"));
-
   //D - hookup track <select>
   let trackSelect = document.querySelector("#track-select");
+  for(const track of parsed.audioFiles)
+  {
+    trackSelect.innerHTML += `<option value="media/${track.filename}">${track.title}</option>`;
+  }
+  trackSelect.firstChild.selected = true;
   // add .onchange event to <select>
   document.querySelector("#track-select").onchange = e => {
     audio.loadSoundFile(e.target.value);
@@ -85,18 +82,12 @@ const setupUI = (canvasElement) => {
     }
   }
 
-  let gradientCB = document.querySelector("#cb-gradient");
-  let barsCB = document.querySelector("#cb-bars");
+  let starsCB = document.querySelector("#cb-stars");
   let circlesCB = document.querySelector("#cb-circles");
 
-  gradientCB.checked = true;
-  gradientCB.onchange = e => {
-    drawParams.showGradient = e.target.checked;
-  }
-
-  barsCB.checked = true;
-  barsCB.onchange = e => {
-    drawParams.showBars = e.target.checked;
+  starsCB.checked = true;
+  starsCB.onchange = e => {
+    drawParams.showStars = e.target.checked;
   }
 
   circlesCB.checked = true;
@@ -104,20 +95,71 @@ const setupUI = (canvasElement) => {
     drawParams.showCircles = e.target.checked;
   }
 
-  document.querySelector("#cb-noise").onchange = e => {
-    drawParams.showNoise = e.target.checked;
-  }
   document.querySelector("#cb-invert").onchange = e => {
     drawParams.showInvert = e.target.checked;
   }
   document.querySelector("#cb-emboss").onchange = e => {
     drawParams.showEmboss = e.target.checked;
   }
+
+  document.querySelector('#cb-highshelf').onchange = e => {
+    audio.toggleHighshelf(); // turn on or turn off the filter, depending on the value of `highshelf`!
+  };
+  document.querySelector('#cb-lowshelf').onchange = e => {
+    //audio.highshelf = e.target.checked;
+    audio.toggleLowshelf(); // turn on or turn off the filter, depending on the value of `highshelf`!
+  };
+  audio.toggleHighshelf();
+  audio.toggleLowshelf();
+
+  //Time or frequency data
+  document.querySelector("#cb-time").onchange = e => {
+    drawParams.time = e.target.checked;
+  }
 } // end setupUI
 
 
 const loop = () => {
-  requestAnimationFrame(loop);
+  setTimeout(loop, 1000/fps)
   canvas.draw(drawParams);
+}
+
+const loadJSONXHR = () =>
+{
+  const url = "data/av-data.json";
+  const xhr = new XMLHttpRequest();
+  xhr.onload = (e) => 
+  {
+      console.log(`In onload - HTTP Status Code = ${e.target.status}`);
+      
+      const returned = e.target.responseText;
+
+      let parsed;
+      try
+      {
+          parsed = JSON.parse(returned);
+      }catch
+      {
+          document.querySelector("#output").innerHTML = "JSON is null";
+          return;
+      }
+      onLoad(parsed);
+      
+  };
+  xhr.onerror = e => console.log(`In onerror - HTTP Status Code = ${e.target.status}`);
+  xhr.open("GET", url);
+  xhr.send();
+}
+
+const onLoad = (parsed) =>
+{
+  document.querySelector("title").innerHTML = parsed.title;
+  document.querySelector("#title").innerHTML = parsed.title;
+  audio.setupWebaudio(`media/${parsed.audioFiles[0].filename}`);
+  drawParams = parsed.initalParams;
+  let canvasElement = document.querySelector("canvas"); // hookup <canvas> element
+  setupUI(canvasElement, parsed);
+  canvas.setupCanvas(canvasElement, audio.analyserNode);
+  loop();
 }
 export { init };
