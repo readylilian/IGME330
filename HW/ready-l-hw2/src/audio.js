@@ -82,7 +82,7 @@ const setVolume = (value) => {
     gainNode.gain.value = value;
 }
 
-function toggleHighshelf(){
+const toggleHighshelf = () =>{
     if(highshelf){
       biquadFilter.frequency.setValueAtTime(1000, audioCtx.currentTime); // we created the `biquadFilter` (i.e. "treble") node last time
       biquadFilter.gain.setValueAtTime(25, audioCtx.currentTime);
@@ -92,7 +92,7 @@ function toggleHighshelf(){
     highshelf = !highshelf;
 }
 
-function toggleLowshelf(){
+const toggleLowshelf = () =>{
     if(lowshelf){
       lowShelfBiquadFilter.frequency.setValueAtTime(1000, audioCtx.currentTime);
       lowShelfBiquadFilter.gain.setValueAtTime(15, audioCtx.currentTime);
@@ -105,8 +105,7 @@ function toggleLowshelf(){
 export 
 { 
     audioCtx, setupWebaudio, playCurrentSound, pauseCurrentSound, 
-    loadSoundFile, setVolume, analyserNode, 
-    biquadFilter, toggleHighshelf , highshelf,
-    lowShelfBiquadFilter, toggleLowshelf, lowshelf
+    loadSoundFile, setVolume, analyserNode, toggleHighshelf ,
+    toggleLowshelf
 };
 // make sure that it's a Number rather than a String
