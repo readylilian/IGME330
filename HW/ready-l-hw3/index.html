@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Astronomy</title>
+    <link rel = "stylesheet" href="css/mainstyle.css">
+    <link rel="shortcut icon" href="media/ufo_icon-icons.com_60256.ico"> 
+    <script src="src/main.js" type="module"></script>
+    <!--Datepicker-->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+    <!--Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!--Proof of ability, just showing access to picture of the day, geolocation and sunrise-sunset-->
+    
+    
+    <header><h1>NASAtronomy Of The Day</h1></header>
+    <div id = "container">
+        <!--Calander set up-->
+        <div id="calendar">
+            Pick a new date? <br>
+            <input type="date" id="input-cal" min="1995-6-16">
+            <p id="prev-dates">Previously Searched For Dates:</p>
+        </div>
+        <div id="pod">
+            <p>No picture today</p>
+        </div>
+        <div id="location">
+            <button id="locbutton">Get Location?</button>
+            Sunrise: N/A, Sunset: N/A
+        </div>
+        <div id="description">BLAJDLKAJDLS</div>
+    </div>
+    
+    <footer><h3><a href="documentation.html">Documentation Page</a></h3></footer>
+</body>
+</html>
