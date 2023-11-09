@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Exam #2 - Practice B</title>
+  <style>
+    canvas {
+		  border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+<h1>Exam #2 - Practice B</h1>
+<canvas width="400" height="300"></canvas>
+<script>
+  "use strict";
+  
+  const ctx = document.querySelector("canvas").getContext("2d");
+  
+  // Exam #1 questions (you should still know how to do for exam #2)
+ 
+  ctx.strokeStyle = "green";
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  ctx.moveTo(200,200);
+  ctx.lineTo(200,400);
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.fillStyle = "red";
+  //ctx.arc(100,100,50,0,2 * Math.PI);
+  //ctx.fill();
+
+  //ctx.beginPath();
+  //ctx.moveTo(100,100);
+  //ctx.lineTo(100,400);
+  //ctx.lineTo(400,400);
+  //ctx.lineTo(400,100);
+  //ctx.closePath();
+  //ctx.fill();
+  // 1 - Write canvas code that will draw a 10-pixel wide green line from (200,200) to (200,400)
+  // 2 - Write canvas code that will fill a 50-pixel radius circle with a solid red color. The circle is centered at (100,100)
+  // 3 - And similar for a rectangle, building a path manually, without using fillRect() or strokeRect()
+   
+
+	 // Here are some new canvas questions
+   ctx.save();
+    ctx.translate(100,100);
+    ctx.rotate(45 * (Math.PI/180));
+    ctx.beginPath();
+    ctx.lineTo(0,0);
+    ctx.lineTo(0,30);
+    ctx.lineTo(30,30);
+    ctx.lineTo(30,0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+	/*
+	4) Without using fillRect() or strokeRect(), draw a 30 x 30 pixel square at (100,100).
+	Fill the square with a solid red color, and rotate it 45 degrees to the right on its
+	center axis.
+	
+	5) Implement the following helper function. Don't forget about our best
+	practice of using save() and restore()
+	
+	const drawCircle = (x,y,radius,fillStyle,scaleX,scaleY) => {
+		// YOU WRITE THE REST
+
+	};
+	
+	
+	*/
+
+  const drawCircle = (x,y,radius,fillStyle,scaleX,scaleY) => {
+		// YOU WRITE THE REST
+    ctx.save();
+    ctx.scale(scaleX,scaleY);
+    ctx.fillStyle = fillStyle;
+    ctx.beginPath();
+    ctx.arc(x,y,radius,0,2 * Math.PI);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+	};
+
+  drawCircle(200,100,40,"yellow", 1,1);
+
+  //let grad = ctx.createLinearGradient(0, 100, 0, 300);
+  let grad = ctx.createRadialGradient(150,150, 20, 150, 150, 200);
+	grad.addColorStop(0, 'red');
+	grad.addColorStop(1 / 6, 'orange');
+	grad.addColorStop(2 / 6, 'yellow');
+	grad.addColorStop(3 / 6, 'green')
+	grad.addColorStop(4 / 6, 'aqua');
+	grad.addColorStop(5 / 6, 'blue');
+	grad.addColorStop(1, 'purple');
+	
+	ctx.fillStyle = grad;
+	ctx.fillRect(0,0,640,480);
+  
+  </script>
+
+
+</body>
+</html>
