@@ -1,52 +1,43 @@
-//Onload get the image of today
-//Assign background and sunset timer to watch for calendar changes 
-//function to get day and set sunset and image
-//function get the image and data from each api
-//probably just load image as it's grabbed
-let today = returnToday();
 let day;
 let locationText;
 let lat;
 let long;
 let calendar;
 let calInput;
-
+let dayList  = [];
 const prefix = "lr4631-";
 const dateKey = prefix + "dates";
-storedDates = localStorage.getItem(dateKey);
+let storedDates = localStorage.getItem(dateKey);
 
-let dayList  = "";
-
-
-
-window.addEventListener("load", createCal);
-//window.addEventListener("load", createButton);
-window.addEventListener("load", createPrevDates);
-window.addEventListener("load", checkDate);
-
-
-
-function findLocation(){
+const findLocation = () =>
+{
     console.log("Trying to find location");
     if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(position);
     }
 }
-function position(pos){
+const position = (pos) =>
+{
     lat = pos.coords.latitude;
     long = pos.coords.longitude
     locationInformation(day);
 }
-function returnToday(){
+const returnToday = () =>
+{
     let formDate = "";
     let date = new Date();
-    let day = date.getDate();
-    formDate += `${date.getFullYear()}-${date.getMonth() + 1}-${day}`;
+    let todayDate = date.getDate();
+    if(todayDate < 10)
+    {
+        todayDate = `0${todayDate}`;
+    }
+    formDate += `${date.getFullYear()}-${date.getMonth() + 1}-${todayDate}`;
     console.log(formDate);
     return formDate;
 }
 
-function locationInformation(date){
+const locationInformation = (date) =>
+{
     const SUN_URL = "https://api.sunrise-sunset.org/json?";
     let sun_url = SUN_URL+ "lat=" + lat + "&lng=" + long + "&date="+date;
     console.log(sun_url);
@@ -54,7 +45,8 @@ function locationInformation(date){
     getSunData(sun_url);
 }
 
-function dateSelected(date){
+const dateSelected = (date) =>
+{
    
     console.log("dateSelected() called");
     const NASA_URL = "https://api.nasa.gov/planetary/apod?";
@@ -66,7 +58,8 @@ function dateSelected(date){
     
 }
 //Actually get the url
-function getImgData(url){
+const getImgData = (url) =>
+{
     //1 new XHR object
     let xhr = new XMLHttpRequest();
     //2 set onload handler
@@ -78,7 +71,8 @@ function getImgData(url){
     xhr.send();
 }
 
-function getSunData(url){
+const getSunData = (url) =>
+{
     //1 new XHR object
     let xhr = new XMLHttpRequest();
     //2 set onload handler
@@ -90,9 +84,11 @@ function getSunData(url){
     xhr.send();
 }
 
-function imgDataLoaded(e){
+const imgDataLoaded = (e) =>
+{
     //5 event.target is the xhr object
     let xhr = e.target;
+    let image;
     //6 xhr.responseText is the file downloaded
     console.log(xhr.responseText);
     //7 turn text into Javascript object
@@ -134,9 +130,10 @@ function imgDataLoaded(e){
         //add description
         document.querySelector('#description').innerHTML = `<h2>${obj.title}</h2><p>${obj.explanation}</p>`;
     }
-    createButton();
+    //setupUI();
 }
-function sunDataLoaded(e){
+const sunDataLoaded = (e) =>
+{
     let xhr = e.target;
     //6 xhr.responseText is the file downloaded
     console.log(xhr.responseText);
@@ -154,10 +151,12 @@ function sunDataLoaded(e){
         
     }
 }
-function dataError(e){
+const dataError = (e) =>
+{
     console.log("An error occurred");
 }
-function prevDay(){
+const prevDay = () =>
+{
     let yesterday = new Date(`${day} 00:00`);
     yesterday.setDate(yesterday.getDate() - 1);
     
@@ -181,7 +180,8 @@ function prevDay(){
     //dateSelected(day);
     locationInformation(day);
 }
-function nextDay(){
+const nextDay = () =>
+{
     let tomorrowCheck = new Date(`${day} 00:00`);
     tomorrowCheck.setDate(tomorrowCheck.getDate() + 1);
 
@@ -205,91 +205,86 @@ function nextDay(){
     locationInformation(day);
 }
 //Date validation
-function checkDate(){
+const checkDate = () =>
+{
     //Is tomorrow past today? If yes, no next button only previous
-    //let prev = ;
+    //Set up our buttons
     document.querySelector('#pod').innerHTML ="";
     let pod = document.querySelector('#pod');
 
-    let prevButton = document.createElement("button");
-    prevButton.innerHTML = "Previous";
-    prevButton.setAttribute("onclick", "prevDay()");
-    prevButton.setAttribute("id", "prev");
-    pod.appendChild(prevButton);
-
-
-    let tomorrowCheck = new Date(`${day} 00:00`);
-    tomorrowCheck.setDate(tomorrowCheck.getDate() + 1);
-
-    if(tomorrowCheck>new Date()){
-        //Don't have an option to go to the next day, only have back
-        console.log("Not valid");
+    //Dont go past the oldest, or past today
+    let check = new Date(`${day} 00:00`);
+    check.setDate(check.getDate() -1);
+    if(check >= new Date(1995,6,16))
+    {
+        let prevButton = document.createElement("button");
+        prevButton.innerHTML = "Previous";
+        prevButton.onclick = () => {prevDay()};
+        prevButton.id = "prev";
+        pod.appendChild(prevButton);
     }
-    else{
-        //Do have a next day button
+    check = new Date(`${day} 00:00`);
+    check.setDate(check.getDate()  + 1);
+    if(check < new Date())
+    {
         let nextButton = document.createElement("button");
         nextButton.innerHTML = "Next";
-        nextButton.setAttribute("onclick", "nextDay()");
-        nextButton.setAttribute("id", "next");
+        nextButton.onclick = () => {nextDay();};
+        nextButton.id = "next";
         pod.appendChild(nextButton);
-        
-        console.log("Valid");
     }
-    dateSelected(calInput.value);
+    dateSelected(document.querySelector('#input-cal').value);
     
 }
 
-//Cal seup
-function createCal()
-{
-    calendar = document.querySelector('#calendar');
-    if(storedDates)
-    {
-        dayList = storedDates;
-    }
-    let calSetup = `<input type="date" id="inputCal" value="${today}" min="1995-6-16" max = "${today}">`;
-    day = today;
-    calendar.innerHTML += calSetup;
-    calInput = document.querySelector('#inputCal');
-    calInput.addEventListener("change", function(){
-        day = calInput.value;
-        checkDate();
-        dayList += `<div onclick="dateLinkClick('${day}')";">${day}</div>`;
-        localStorage.setItem(dateKey, `${dayList}`);
-        storedDates = localStorage.getItem(dateKey);
-        
-        document.querySelector('#prevDates').innerHTML +=`<div onclick="dateLinkClick('${day}')";">${day}</div>`;
-        
-        
-    },false);
-    
-}
-function createButton()
-{
-    let locInfo = document.querySelector("#location");
-    locInfo.innerHTML = "";
-    locButton = document.createElement("button");
-    locButton.setAttribute("id", "locButton");
-    locButton.innerHTML = "Get Location?";
-    locButton.setAttribute("onclick","findLocation()");
-    locInfo.appendChild(locButton);
-    locInfo.innerHTML += "Sunrise: N/A, Sunset: N/A";
-}
-function createPrevDates()
-{
-    let prevDays = document.createElement("p");
-    prevDays.setAttribute("id", "prevDates");
-    prevDays.innerHTML = "Previously Searched For Dates:"
-    calendar.appendChild(prevDays);
-    if(storedDates)
-    {
-        calendar = document.querySelector('#calendar');
-        document.querySelector("#prevDates").innerHTML +=`${storedDates}`;
-    }
-}
-function dateLinkClick(date)
+const dateLinkClick = (date) =>
 {
     day = date;
     calInput.value = day;
     checkDate();
 }
+
+const setupUI = () =>
+{
+    //Set up location
+    let locButton = document.querySelector("#locbutton");
+    locButton.onclick = findLocation;
+
+    if(storedDates)
+    {
+        dayList = storedDates.split(",");
+        //document.querySelector("#prev-dates").innerHTML +=`${storedDates}`;
+        document.querySelector("#prev-dates").innerHTML = `Previously Searched For Dates:`;
+        document.querySelector("#prev-dates").innerHTML += dayList.map(x => `<div>${x}</div>`).join("");
+    }
+
+    //Set up the calendar
+    day = today;
+    calInput = document.querySelector('#input-cal');
+    calInput.value = `${today}`;
+    calInput.max = `${today}`;
+    calInput.onchange = () =>
+    {
+        day = calInput.value;
+        checkDate();
+        dayList.push(day);
+        localStorage.setItem(dateKey, `${dayList}`);
+        storedDates = localStorage.getItem(dateKey);
+        document.querySelector("#prev-dates").innerHTML = `Previously Searched For Dates:`;
+        document.querySelector("#prev-dates").innerHTML += dayList.map(x => `<div>${x}</div>`).join("");
+    };
+
+    dateSelected(document.querySelector('#input-cal').value);
+    checkDate();
+}
+
+//Onload get the image of today
+//Assign background and sunset timer to watch for calendar changes 
+//function to get day and set sunset and image
+//function get the image and data from each api
+//probably just load image as it's grabbed
+let today = returnToday();
+//window.addEventListener("load", createCal);
+//window.addEventListener("load", createPrevDates);
+//window.addEventListener("load", checkDate);
+window.onload = () => {setupUI();};

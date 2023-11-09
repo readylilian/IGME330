@@ -7,7 +7,7 @@
     <title>Daily Astronomy</title>
     <link rel = "stylesheet" href="css/mainstyle.css">
     <link rel="shortcut icon" href="media/ufo_icon-icons.com_60256.ico"> 
-    <script src = "js/main.js"></script>
+    <script src="src/main.js" type="module"></script>
     <!--Datepicker-->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
@@ -28,12 +28,15 @@
         <!--Calander set up-->
         <div id="calendar">
             Pick a new date? <br>
+            <input type="date" id="input-cal" min="1995-6-16">
+            <p id="prev-dates">Previously Searched For Dates:</p>
         </div>
         <div id="pod">
             <p>No picture today</p>
         </div>
         <div id="location">
-            Sunrise and sunset could not be found.
+            <button id="locbutton">Get Location?</button>
+            Sunrise: N/A, Sunset: N/A
         </div>
         <div id="description">BLAJDLKAJDLS</div>
     </div>
