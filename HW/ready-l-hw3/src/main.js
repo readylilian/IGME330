@@ -47,7 +47,6 @@ const locationInformation = (date) =>
 
 const dateSelected = (date) =>
 {
-   
     console.log("dateSelected() called");
     const NASA_URL = "https://api.nasa.gov/planetary/apod?";
     let NASA_KEY = "xodsnbtiJqcWwR7hiMvBfyeABMAV3yWMIUamfg4f";
@@ -55,7 +54,6 @@ const dateSelected = (date) =>
     //Update UI
     console.log(nasa_url);
     getImgData(nasa_url);
-    
 }
 //Actually get the url
 const getImgData = (url) =>
@@ -207,34 +205,29 @@ const nextDay = () =>
 //Date validation
 const checkDate = () =>
 {
-    //Is tomorrow past today? If yes, no next button only previous
     //Set up our buttons
-    document.querySelector('#pod').innerHTML ="";
-    let pod = document.querySelector('#pod');
-
     //Dont go past the oldest, or past today
     let check = new Date(`${day} 00:00`);
-    check.setDate(check.getDate() -1);
+    check.setDate(check.getDate() - 1);
     if(check >= new Date(1995,6,16))
     {
-        let prevButton = document.createElement("button");
-        prevButton.innerHTML = "Previous";
-        prevButton.onclick = () => {prevDay()};
-        prevButton.id = "prev";
-        pod.appendChild(prevButton);
+        document.querySelector("#prev").style.visibility = "visible";
+    }
+    else
+    {
+        document.querySelector("#prev").style.visibility = "hidden";
     }
     check = new Date(`${day} 00:00`);
-    check.setDate(check.getDate()  + 1);
+    check.setDate(check.getDate() + 1);
     if(check < new Date())
     {
-        let nextButton = document.createElement("button");
-        nextButton.innerHTML = "Next";
-        nextButton.onclick = () => {nextDay();};
-        nextButton.id = "next";
-        pod.appendChild(nextButton);
+        document.querySelector("#next").style.visibility = "visible";
+    }
+    else
+    {
+        document.querySelector("#next").style.visibility = "hidden";
     }
     dateSelected(document.querySelector('#input-cal').value);
-    
 }
 
 const dateLinkClick = (date) =>
@@ -244,16 +237,48 @@ const dateLinkClick = (date) =>
     checkDate();
 }
 
+const formatDate = (date) =>
+{
+    let format = `${date.getFullYear()}-`;
+    if((date.getMonth() + 1) < 10)
+    {
+        format += `0${date.getMonth() + 1}-`;
+    }
+    else{format += `${date.getMonth() + 1}-`;}
+
+    if(yesterday.getDate() < 10)
+    {
+        format += `0${date.getDate()}`;
+    }
+    else{format += `${date.getDate()}`;}
+
+    return format;
+}
+
 const setupUI = () =>
 {
-    //Set up location
-    let locButton = document.querySelector("#locbutton");
-    locButton.onclick = findLocation;
+    //Set up buttons
+    document.querySelector("#locbutton").onclick = findLocation;
+    document.querySelector("#prev").onclick = () =>
+    {
+        let check = new Date(`${day} 00:00`);
+        check.setDate(check.getDate() - 1);
+        day = formatDate(check);
+        checkDate();
+        locationInformation(day);
+    };
+    document.querySelector("#next").onclick = () =>
+    {
+        let check = new Date(`${day} 00:00`);
+        check.setDate(check.getDate() + 1);
+        day = formatDate(check);
+        checkDate();
+        locationInformation(day);
+    };
 
     if(storedDates)
     {
         dayList = storedDates.split(",");
-        //document.querySelector("#prev-dates").innerHTML +=`${storedDates}`;
         document.querySelector("#prev-dates").innerHTML = `Previously Searched For Dates:`;
         document.querySelector("#prev-dates").innerHTML += dayList.map(x => `<div>${x}</div>`).join("");
     }
@@ -266,12 +291,12 @@ const setupUI = () =>
     calInput.onchange = () =>
     {
         day = calInput.value;
-        checkDate();
         dayList.push(day);
         localStorage.setItem(dateKey, `${dayList}`);
         storedDates = localStorage.getItem(dateKey);
         document.querySelector("#prev-dates").innerHTML = `Previously Searched For Dates:`;
         document.querySelector("#prev-dates").innerHTML += dayList.map(x => `<div>${x}</div>`).join("");
+        checkDate();
     };
 
     dateSelected(document.querySelector('#input-cal').value);
@@ -284,7 +309,4 @@ const setupUI = () =>
 //function get the image and data from each api
 //probably just load image as it's grabbed
 let today = returnToday();
-//window.addEventListener("load", createCal);
-//window.addEventListener("load", createPrevDates);
-//window.addEventListener("load", checkDate);
-window.onload = () => {setupUI();};
+window.onload = e => {setupUI()};
