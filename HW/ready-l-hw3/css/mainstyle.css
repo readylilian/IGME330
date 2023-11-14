@@ -177,10 +177,10 @@ input{
     justify-items: center;
     max-height: fit-content;
 }
-
-#pod img {grid-area: pic;box-shadow: 0 5px 40px #e6a93788; max-height: 80%;}
+#pod-image {grid-area: pic;}
+#pod-image img {box-shadow: 0 5px 40px #e6a93788; max-height: 80%;}
 #documentation img{max-width: 50%;}
-#pod iframe{height:80%;grid-area: pic; margin: 10px;}
+#pod-image iframe {height:80%; margin: 10px;}
 #next{grid-area: next;}
 #prev{grid-area: prev}
 
