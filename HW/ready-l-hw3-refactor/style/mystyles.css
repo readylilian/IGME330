@@ -7923,6 +7923,7 @@ button {
   border: none;
   border-radius: 7%;
   margin: 5px 5px 5px 0;
+  min-width: fit-content;
   width: 15vw;
   height: 5vh;
   background-color: #03122b;
@@ -7950,7 +7951,7 @@ input {
 
 header {
   grid-area: header;
-  height: 100%; }
+  height: fit-content; }
 
 img {
   opacity: 1;
