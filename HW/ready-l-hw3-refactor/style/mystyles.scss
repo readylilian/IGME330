@@ -1,0 +1,283 @@
+@charset "utf-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap');
+
+@keyframes animateBackground{
+    from{background-position: 0 50%;}
+    to{background-position: 100% 50%;}
+}
+
+$navyblue: #03122b;
+$navyblue-invert: findColorInvert($navyblue);
+$clear: rgba(0,0,0,0);
+$creme: #E6E8E6;
+$darkgold: #e6a93769;
+$gold: #e6a937;
+$darkblue: #041c44;
+
+$primary: $navyblue;
+
+$family-primary: "Merriweather", serif;
+$family-secondary: "Helvetica",serif;
+$family-sans-serif: "Source Sans Pro",sans-serif;
+
+@import "../node_modules/bulma/bulma.sass";
+html
+{
+    height: 100%;
+    font-weight: 400;
+    line-height: 26px;
+    background-color: $clear;
+}
+footer
+{
+    align-self: center;
+    grid-area:footer;
+    background-color: $navyblue;
+    padding: 10px;
+    font-family: $family-sans-serif;
+    color: $creme;
+}
+h1
+{
+    font-family: $family-secondary;
+    margin: 20px 0 20px 10px;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 53px;
+    letter-spacing: -.021em;
+}
+h2
+{
+    font-family: $family-secondary;
+    margin: 5px;
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 53px;
+    letter-spacing: -.021em;
+}
+h3
+{
+    font-family: $family-secondary;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+}
+button
+{
+    border: none;
+    border-radius: 7%;
+    margin: 5px 5px 5px 0;
+    width: 15vw; 
+    height: 5vh;
+    background-color: $navyblue;
+    color: $creme;
+    font-family: $family-secondary;
+    font-size: 1rem;
+    transition-duration: 0.5s;
+}
+button:hover{
+    background-color: $darkblue;
+    box-shadow: 0 0 40px $darkgold;
+}
+li
+{
+    margin-bottom: 5px;
+    font-family:$family-primary;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 26px;
+}
+input{
+    font-family: $family-sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 26px;
+}
+header
+{
+    grid-area: header;
+    height: 100%;
+}
+img
+{
+    opacity: 1;
+    max-width: 100%;
+}
+nav
+{
+    font-family: $family-sans-serif;
+}
+p
+{
+    margin: 5px;
+}
+#main
+{
+    height: 100%;
+    display: grid;
+    grid-template-areas: 
+    "header"
+    "content";
+    grid-template-rows: auto auto;
+    background-blend-mode:lighten;
+    background-position: 0px 50%;
+    animation: animateBackground 200s linear infinite;
+    row-gap: 40px;
+    background-color: $navyblue;
+    color: $creme;
+    margin: 0;
+}
+#container{
+    justify-self: center;
+    width: 98%;
+    max-height: 100%;
+    grid-area: content;
+    display: grid;
+    grid-template-areas:
+    "cal     pod     desc"
+    "cal     sun     desc";
+    grid-template-rows: auto auto;
+    grid-template-columns: auto 50% auto;
+    column-gap: 1%;
+    row-gap: 1%;
+    margin: 10px;
+}
+#calendar
+{
+    font-family: $family-sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 26px;
+    grid-area: cal;
+    background-color:$navyblue;
+    padding: 10px;
+    height: fit-content;
+    box-shadow: -5px 5px 20px $black;
+}
+#location
+{
+    grid-area: sun;
+    border: 10px solid $darkgold;
+    background-color:#2b0c038f; 
+    box-shadow: 0 5px 40px $darkgold;
+    padding: 10px;
+    height: fit-content;
+    font-family: $family-sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 33px;
+}
+#description
+{
+    grid-area: desc; 
+    background-color:$navyblue; 
+    height: fit-content;
+    align-self: flex-start;
+    justify-self: center;
+    box-shadow: 5px 5px 20px $black;
+    padding: 10px;
+    font-family: $family-sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 33px;
+    margin-bottom: 20px;
+}
+#pod
+{
+    display: grid;
+    grid-area: pod;
+    grid-template-areas:
+    "prev   next"
+    "pic    pic";
+    grid-template-rows: 7vh auto;
+    justify-items: center;
+    max-height: fit-content;
+}
+#pod-image {grid-area: pic;}
+#pod-image img {box-shadow: 0 5px 40px $darkgold; max-height: 80%;}
+#documentation img{max-width: 50%;}
+#pod-image iframe {height:80%; margin: 10px;}
+#next{grid-area: next;}
+#prev{grid-area: prev}
+
+a,a:visited, a:focus{color: $creme}
+a:hover{color:$gold; transition-duration: 0.5s;}
+a:active{color:$gold;}
+a.navbar-item{color: $navyblue};
+.navbar-brand{align-items: center;}
+
+#about
+{
+    a,a:visited, a:focus{color: $navyblue}
+    a:hover{color:$gold; transition-duration: 0.5s;}
+    a:active{color:$gold;}
+    color: $navyblue;
+    #burger{
+        color: $creme;
+    }
+    #designdiv, #apidiv{
+        padding: 10px;
+    }
+    #documentation{
+        padding: 10px;
+        font-family: $family-sans-serif;
+        font-weight: 300;
+        font-size: 18px;
+        line-height: 33px;
+    }
+    img
+    {
+        border: 10px solid $darkgold;
+    }
+    @media screen and (min-width: 1024px)
+    {
+        .navbar
+        {
+            a,a:visited, a:focus{color: $creme}
+        }
+    }
+}
+
+@media screen and (max-width:1200px)
+{
+    #container
+    {
+        display: grid;
+        grid-template-areas:
+        "cal     pod"
+        "sun     pod"
+        "desc    desc";
+        grid-template-rows: auto auto auto;
+        grid-template-columns: auto auto;
+    }
+}
+@media screen and (max-width:770px)
+{
+    body{grid-template-rows: 80px auto;}
+    h1{font-size: 38px;}
+    #container
+    {
+        display: grid;
+        grid-template-areas:
+        "pod"
+        "cal"
+        "sun"
+        "desc";
+        grid-template-rows: auto auto auto auto;
+        grid-template-columns: auto;
+    }
+    #pod iframe{height:80vw;}
+}
+@media screen and (min-width:1600px)
+{
+    #container
+    {
+        display: grid;
+        grid-template-areas:
+        "cal  pod   desc"
+        "cal  pod   sun ";
+        grid-template-rows: auto auto;
+        grid-template-columns: auto auto auto;
+    }
+}

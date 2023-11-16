@@ -1,0 +1,14 @@
+{
+  "name": "ready-l-hw3",
+  "version": "1.0.0",
+  "main": "style/mystyles.scss",
+  "devDependencies": {
+    "bulma": "^0.9.4",
+    "node-sass": "^9.0.0"
+  },
+  "scripts": {
+    "css-build": "node-sass --omit-source-map-url style/mystyles.scss style/mystyles.css",
+    "css-watch": "npm run css-build -- --watch",
+    "start": "npm run css-watch"
+  }
+}

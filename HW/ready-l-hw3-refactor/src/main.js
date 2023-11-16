@@ -97,6 +97,13 @@ const setupUI = () =>
 {
     let today = formatDate(new Date());
     day = today;
+    //This goes first so when the rest of UI setup fails the about doc, this still works
+    const burgerIcon = document.querySelector('#burger');
+    const navbarMenu = document.querySelector('#nav-links');
+
+    burgerIcon.onclick = () => {
+        navbarMenu.classList.toggle('is-active');
+    };
     //Set up buttons
     document.querySelector("#loc-button").onclick = () => {load.findLocation(day)};
     document.querySelector("#prev-button").onclick = prevDay;

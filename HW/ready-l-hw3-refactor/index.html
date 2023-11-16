@@ -5,22 +5,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Astronomy</title>
-    <link rel = "stylesheet" href="css/mainstyle.css">
-    <link rel="shortcut icon" href="media/ufo_icon-icons.com_60256.ico"> 
-    <script src="src/main.js" type="module"></script>
+    
     <!--Datepicker-->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
-    <!--Fonts-->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+
+    <script src="src/main.js" type="module"></script>
+    <link rel="shortcut icon" href="media/ufo_icon-icons.com_60256.ico"> 
+    <link rel="stylesheet" href="style/mystyles.css">
 </head>
-<body>
-    <header><h1>NASAtronomy Of The Day</h1></header>
+<body class="family-primary" id="main">
+    <header>
+        <nav class="navbar is-primary">
+            <!-- logo / brand -->
+            <div class="navbar-brand">
+                <h1>NASAtronomy Of The Day</h1>
+                <a class="navbar-burger" id="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </div>
+          
+            <div class="navbar-menu" id="nav-links">
+              <!-- right links -->
+                <div class="navbar-end">
+                    <a class="navbar-item" href="index.html">Home</a>
+                    <a class="navbar-item" href="about.html">About</a>
+                </div>
+            </div>
+          </nav>
+    </header>
     <div id = "container">
         <!--Calander set up-->
         <div id="calendar">
@@ -40,7 +55,5 @@
         </div>
         <div id="description">BLAJDLKAJDLS</div>
     </div>
-    
-    <footer><h3><a href="documentation.html">Documentation Page</a></h3></footer>
 </body>
 </html>
