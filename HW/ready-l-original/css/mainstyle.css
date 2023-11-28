@@ -1,0 +1,237 @@
+html
+{
+    height: 100%;
+    font-family: Merriweather;
+    font-weight: 400;
+    line-height: 26px;
+}
+/*Attempting animation*/
+@keyframes animateBackground{
+    from{background-position: 0 50%;}
+    to{background-position: 100% 50%;}
+}
+body
+{
+    height: 100%;
+    display: grid;
+    
+    grid-template-areas: 
+    "header"
+    "content"
+    "footer";
+    grid-template-rows: 80px auto 80px;
+    background-blend-mode:lighten;
+    background-position: 0px 50%;
+    animation: animateBackground 200s linear infinite;
+    row-gap: 40px;
+    background-color: #03122b;
+    color: #E6E8E6;
+    margin: 0;
+}
+#container{
+    justify-self: center;
+    width: 98%;
+    max-height: 100%;
+    grid-area: content;
+    display: grid;
+    grid-template-areas:
+    "cal     pod     desc"
+    "cal     sun     desc";
+    grid-template-rows: auto auto;
+    grid-template-columns: auto 50% auto;
+    column-gap: 1%;
+    row-gap: 1%;
+    margin: 10px;
+}
+header
+{
+    grid-area: header;
+    background-color: #03122b;
+    max-height: 100%;
+}
+footer
+{
+    align-self: center;
+    grid-area:footer;
+    background-color: #03122b;
+    padding: 10px;
+    text-align: center;
+}
+button
+{
+    border: none;
+    border-radius: 7%;
+    margin: 5px 5px 5px 0;
+    width: 15vw; 
+    height: 5vh;
+    background-color: #020B1C;
+    color: #E6E8E6;
+    font-family: Helvetica;
+    font-size: 1rem;
+    transition-duration: 0.5s;
+}
+button:hover{
+    background-color:#041c44 ;
+    box-shadow: 0 0 40px #e6a93769;
+}
+h1
+{
+    margin: 20px 0 20px 10px;
+    font-family: Helvetica;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 53px;
+    letter-spacing: -.021em;
+}
+h2
+{
+    margin: 5px;
+    font-family: Helvetica;
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 53px;
+    letter-spacing: -.021em;
+}
+h3
+{
+    font-family: Helvetica;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+}
+li
+{
+    margin-bottom: 5px;
+    font-family: Merriweather;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 26px;
+}
+p{margin: 5px;}
+
+img
+{
+    opacity: 1;
+    max-width: 100%;
+}
+input{
+    font-family: 'Source Sans Pro';
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 26px;
+}
+#calendar
+{
+    font-family: 'Source Sans Pro';
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 26px;
+    grid-area: cal;
+    background-color:#03122b;
+    padding: 10px;
+    height: fit-content;
+    box-shadow: -5px 5px 20px #020B1C ;
+}
+#location
+{
+    grid-area: sun;
+    border: 10px solid #e6a937ad;
+    background-color:#2b0c038f; 
+    box-shadow: 0 5px 40px #e6a93788;
+    padding: 10px;
+    height: fit-content;
+    font-family: 'Source Sans Pro';
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 33px;
+}
+#description
+{
+    grid-area: desc; 
+    background-color:#03122b; 
+    height: fit-content;
+    align-self: flex-start;
+    justify-self: center;
+    box-shadow: 5px 5px 20px #020B1C ;
+    padding: 10px;
+    font-family: 'Source Sans Pro';
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 33px;
+}
+#documentation{
+    padding: 10px;
+    font-family: 'Source Sans Pro';
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 33px;
+}
+#pod
+{
+    display: grid;
+    grid-area: pod;
+    grid-template-areas:
+    "prev   next"
+    "pic    pic";
+    grid-template-rows: 7vh auto;
+    justify-items: center;
+    max-height: fit-content;
+}
+
+#pod img {grid-area: pic;box-shadow: 0 5px 40px #e6a93788; max-height: 80%;}
+#documentation img{max-width: 50%;}
+#pod iframe{height:80%;grid-area: pic; margin: 10px;}
+#next{grid-area: next;}
+#prev{grid-area: prev}
+
+a:link{color: #E6E8E6;}
+a:visited, a:focus{color: #b84c2b;}
+a:hover{color:#e6a937e1;}
+a:active{color:#e6a937;}
+
+@media screen and (max-width:1200px)
+{
+    
+    #container
+    {
+        display: grid;
+        grid-template-areas:
+        "cal     pod"
+        "sun     pod"
+        "desc    desc";
+        grid-template-rows: auto auto auto;
+        grid-template-columns: auto auto;
+    }
+}
+
+@media screen and (max-width:770px)
+{
+    body{grid-template-rows: 80px auto auto;}
+    h1{font-size: 38px;}
+    #container
+    {
+        display: grid;
+        grid-template-areas:
+        "pod"
+        "cal"
+        "sun"
+        "desc";
+        grid-template-rows: auto auto auto auto;
+        grid-template-columns: auto;
+    }
+    #pod iframe{height:80vw;}
+}
+
+@media screen and (min-width:1600px)
+{
+
+    #container
+    {
+        display: grid;
+        grid-template-areas:
+        "cal  pod   desc"
+        "cal  pod   sun ";
+        grid-template-rows: auto auto;
+        grid-template-columns: auto auto auto;
+    }
+}
