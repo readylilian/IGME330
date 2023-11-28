@@ -117,7 +117,7 @@ const setupUI = () =>
     calInput.onchange = () =>
     {
         day = calInput.value;
-        if(!dayList.find((e)=> e == day))
+        if(dayList.indexOf(day) == -1)
         {
             dayList.push(day);
         }

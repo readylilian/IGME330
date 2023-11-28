@@ -1,0 +1,15 @@
+- I used TypeScript
+- Section 2
+    For the project originally we needed to create several HTMLElements in the javascript.
+    Since that was no longer necessary, I moved all of those creations to already exist in the HTML and used Bulma to modify it.
+    The site was already named index.html, so that stayed the same.
+    I switched over the naming convention from camel-case to kebab-case
+- Section 3
+    This was where the bulk of the work for this project took place, I made this project about two years ago and it was very messy.
+    I had a lot of functions split up for legibility, but it overall sacrificed the legibility of the code.
+    There was also an additional issue with how I called the location information, which would bug out if you searched in specific patterns on the site.
+    I consolidated these functions into six to handle setting up the UI and formatting the dates.
+    Anything related to the APIs I moved into a loader file, and only exported the values I needed main to touch. 
+    These functions needed a bit less refactoring than the main file ones, mostly just compressing things down.
+    Each time I changed how something would work, it would break, especially after switching it to a module.
+    After a lot of just dealing with errors and plowing through on fixing issues, I was able to get everything working again, and without the bugs it used to have.
