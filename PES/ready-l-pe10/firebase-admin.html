@@ -36,13 +36,13 @@
   const scoresRef = ref(db, 'scores');
 
   const scoresChanged = (snapshot) => {
-    document.querySelector("#scoresList").innerHTML = "";
+    document.querySelector("#park-list").innerHTML = "";
     snapshot.forEach(score => {
       const childKey = score.key;
       const childData = score.val();
       console.log(childData);
       console.log(childKey,childData);
-      document.querySelector("#scoresList").innerHTML += `<li>${childData.userId} - ${childData.game} - ${childData.score}</li>`;
+      document.querySelector("#park-list").innerHTML += `<li></b>${childData.park}(${childData.id})</b> - Likes: ${childData.likes}</li>`;
     });
   }
 
