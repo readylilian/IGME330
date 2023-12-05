@@ -19,26 +19,13 @@ const firebaseConfig =
 const app = initializeApp(firebaseConfig);
 console.log(app); // make sure firebase is loaded
 const db = getDatabase();
-const parksRef = ref(db, 'park-pop');
-
-
-// #2 NEW STUFF
-/*
-const scoresChanged = (snapshot) => 
-{
-    snapshot.forEach(score => {
-      const childKey = score.key;
-      const childData = score.val();
-      console.log(childData);
-      console.log(childKey,childData);
-    });
-}*/
+const parksRef = ref(db, 'favorites');
 
 
 // This is the "harder" way and not necessary for incrementing a counter
 // But this code is useful if you want to `get()` a value just once
 // and/or do "batch" updates of non-numeric values with `update()`
-const writeFavParkData = (id,name) => {
+const writeFavParkData = (id,name,fav) => {
     const db = getDatabase();
     const favRef = ref(db, 'favorites/' + id);
   
@@ -50,7 +37,7 @@ const writeFavParkData = (id,name) => {
         // if it's already in "favorites/" - update the number of likes
         favorite = snapshot.val();
         console.log("found - current values=",favorite);
-        const likes = favorite.likes + 1;
+        const likes = favorite.likes + fav;
         const newData = {
           name,
           id,
@@ -74,4 +61,25 @@ const writeFavParkData = (id,name) => {
     });
 }
 
-export {onValue, writeFavParkData,parksRef};//(parksRef,scoresChanged);
+//In a situation where the database has been set up late or something
+//This adds a user's previous likes to the database once they load the page
+const doesParkExist = (id,name) =>
+{
+    const db = getDatabase();
+    const favRef = ref(db, 'favorites/' + id);
+    // does it already exist?
+    get(favRef).then(snapshot => {
+      if (snapshot.exists()) {
+        return;
+      }
+      else
+      {
+        //If not add it with a like
+        writeFavParkData(id,name,1);
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+}
+
+export {onValue, writeFavParkData,parksRef, doesParkExist};//(parksRef,scoresChanged);

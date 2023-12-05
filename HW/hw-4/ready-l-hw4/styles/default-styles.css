@@ -30,3 +30,17 @@
 .mapboxgl-popup-content p{
 	text-align: left;
 }
+
+.column
+{
+	padding: 1.5rem;
+}
+
+#details-3 p{
+	margin-bottom: 1em !important;
+}
+
+#favorites-list{
+	height: 144px;
+	overflow: auto;
+}

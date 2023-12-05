@@ -1,7 +1,7 @@
 import * as map from "./map.js";
 import * as ajax from "./ajax.js";
 import * as storage from "./storage.js";
-import { writeFavParkData } from "./firebase.js";
+import * as fire from "./firebase.js";
 
 // I. Variables & constants
 // NB - it's easy to get [longitude,latitude] coordinates with this tool: http://geojson.io/
@@ -12,6 +12,8 @@ let favoriteIds = ["p20","p79","p180","p43"];
 
 // II. Functions
 const setupUI = () => {
+	document.querySelector("#btn-fav").style.display = "none";
+	document.querySelector("#btn-del").style.display = "none";
 	// NYS Zoom 5.2
 	document.querySelector("#btn1").onclick = () =>
 	{
@@ -33,9 +35,6 @@ const setupUI = () => {
 		map.setPitchAndBearing(0,0);
 		map.flyTo(lnglatUSA);
 	};
-
-	document.querySelector("#btn-fav").style.display = "none";
-	document.querySelector("#btn-del").style.display = "none";
 
 	//If you have favorites load them in, otherwise set a clear array
 	if(storage.readFromLocalStorage("favoriteIds"))
@@ -80,27 +79,25 @@ const refreshFavorites = () =>
 	favoritesContainer.innerHTML = "";
 	for(const id of favoriteIds){
 		favoritesContainer.appendChild(createFavoriteElement(id));
-		const feature = getFeatureById(id);
-		writeFavParkData(id,feature.properties.title);
 	}
 };
 
 const removeFromFavorites = (id) =>
 {
-	console.log(favoriteIds);
+	const feature = getFeatureById(id);
 	favoriteIds.splice(favoriteIds.findIndex(e => e == id),1);
 	showFeatureDetails(id);
+	fire.writeFavParkData(id,feature.properties.title,-1);
 	refreshFavorites();
-	console.log(favoriteIds);
 }
 
 const addToFavorites = (id) =>
 {
-	console.log(favoriteIds);
+	const feature = getFeatureById(id);
 	favoriteIds.push(id);
 	showFeatureDetails(id);
+	fire.writeFavParkData(id,feature.properties.title,1);
 	refreshFavorites();
-	console.log(favoriteIds);
 }
 
 const getFeatureById = (id) =>
@@ -118,20 +115,21 @@ const showFeatureDetails = (id) =>
 	`<p><b>Address:</b> ${feature.properties.address}</p>
 	<p><b>Phone:</b> <a href="tel:${feature.properties.phone}">${feature.properties.phone}</a></p>
 	<p><b>Website:</b> <a href="${feature.properties.url}">${feature.properties.url}</a>`;
+
+	document.querySelector("#btn-fav").style.display = "inline-flex";
+	document.querySelector("#btn-del").style.display = "inline-flex";
+
 	if(favoriteIds.includes(id))
 	{
-		document.querySelector("#btn-fav").style.display = "inline-flex";
 		document.querySelector("#btn-fav").disabled = true;
-		document.querySelector("#btn-del").style.display = "inline-flex";
 		document.querySelector("#btn-del").disabled = false;
 		document.querySelector("#btn-del").onclick = () => {removeFromFavorites(id)};
 	}
 	else
 	{
-		document.querySelector("#btn-fav").style.display = "inline-flex";
+		
 		document.querySelector("#btn-fav").disabled = false;
 		document.querySelector("#btn-fav").onclick = () => {addToFavorites(id)};
-		document.querySelector("#btn-del").style.display = "inline-flex";
 		document.querySelector("#btn-del").disabled = true;
 	}
 
@@ -149,6 +147,11 @@ const init = () =>
 		console.log(geojson);
 		map.addMarkersToMap(geojson, showFeatureDetails);
 		setupUI();
+		for(const id of favoriteIds){
+			const feature = getFeatureById(id);
+			//if this is the first time it's running, then add a like for each favorite
+			fire.doesParkExist(id,feature.properties.title);
+		}
 	})
 };
 
